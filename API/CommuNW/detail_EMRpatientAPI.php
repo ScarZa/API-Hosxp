@@ -7,13 +7,13 @@ header("Access-Control-Allow-Credentials: true");
 
 
 function __autoload($class_name) {
-    include '../class/' . $class_name . '.php';
+    include '../../class/' . $class_name . '.php';
 }
-include_once ('../plugins/funcDateThai.php');
+include_once ('../../plugins/funcDateThai.php');
 set_time_limit(0);
 $conn_DB= new EnDeCode();
 $conv=new convers_encode();
-$read="../connection/conn_DB.txt";
+$read="../../connection/conn_DB.txt";
 $conn_DB->para_read($read);
 $conn_DB->Read_Text();
 $conn_DB->conn_PDO();
@@ -21,20 +21,14 @@ $result = array();
 $series = array();
 $data = isset($_POST['data'])?$_POST['data']:(isset($_GET['data'])?$_GET['data']:'');
 $data2 = isset($_POST['data2'])?$_POST['data2']:(isset($_GET['data2'])?$_GET['data2']:'');
+
 if(!empty($data2)){
-    $sql="select p.hn,p.pname,p.fname,p.lname,p.sex,p.informaddr,p.cid,p.birthday,concat(v.age_y,' ปี ',v.age_m,' เดือน ') age,m.name as mrname,a.an,a.pdx,a.dx0,a.dx1,a.dx2,a.dx3,a.dx4,a.dx5,w.name,pt.name ptname
-    from patient p 
-    LEFT OUTER JOIN an_stat a ON a.hn=p.hn
-    left outer join marrystatus m on p.marrystatus=m.code 
-    inner join ward w on w.ward = a.ward
-    left outer join pttype pt on a.pttype=pt.pttype
-    where a.an= :an";
+    $sql="SELECT vn FROM an_stat WHERE an = :an";
     $conn_DB->imp_sql($sql);
     $execute=array(':an'=>$data2);
     $rslt=$conn_DB->select_a($execute);
-    $ward = $conv->tis620_to_utf8( $rslt['name']);
-    $series['ward'] = 'Admit ที่ : '.$ward;
-}else {
+    $data = $rslt['vn'];
+}
     $sql="select oap.nextdate,v1.vn,v1.hn,v1.pttype_expire,re.expire_date,v1.age_y,v1.age_m,o1.vstdate,SUBSTR(o1.vsttime,1,5)vsttime,hos.Dhospital
     ,s.bw,s.height,s.bmi,s.pmh,s.cc,s.hpi,s.temperature,s.pulse,s.rr,s.bps,s.bpd
     ,p.pname,p.fname,p.lname
@@ -110,7 +104,7 @@ and op.income in(03,19))) GROUP BY op.vstdate ORDER BY op.vstdate desc limit 1)S
     $conn_DB->imp_sql($sql);
     $execute=array(':vn'=>$data);
     $rslt=$conn_DB->select_a($execute);
-}
+
 
 //print_r($rslt);
 
@@ -134,7 +128,7 @@ and op.income in(03,19))) GROUP BY op.vstdate ORDER BY op.vstdate desc limit 1)S
     $series['informtel'] = $conv->tis620_to_utf8($rslt['informtel']);
     $series['cid'] = $rslt['cid'];
     $series['birthday'] = DateThai1($rslt['birthday']);
-    $series['bloodgrp'] = $conv->tis620_to_utf8($rslt['bloodgrp']);
+    $series['bloodgrp'] = $conv->tis620_to_utf8(trim($rslt['bloodgrp']));
     $series['drugallergy'] = $conv->tis620_to_utf8( $rslt['drugallergy']);
     $series['disease'] = $conv->tis620_to_utf8( $rslt['disease']);
     $series['age'] = $conv->tis620_to_utf8($rslt['age_y']).' ปี '.$conv->tis620_to_utf8($rslt['age_m']).' เดือน';

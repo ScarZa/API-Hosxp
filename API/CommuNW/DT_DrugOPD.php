@@ -6,12 +6,12 @@ header("Access-Control-Allow-Methods: GET,POST");
 header("Access-Control-Allow-Credentials: true");
 
 function __autoload($class_name) {
-    include '../class/' . $class_name . '.php';
+    include '../../class/' . $class_name . '.php';
 }
-include '../plugins/funcDateThai.php';
+include '../../plugins/funcDateThai.php';
 $conn_DB = new EnDeCode();
 $conv=new convers_encode();
-$read = "../connection/conn_DB.txt";
+$read = "../../connection/conn_DB.txt";
 $conn_DB->para_read($read);
 $conn_db = $conn_DB->Read_Text();
 $conn_DB->conn_PDO();
