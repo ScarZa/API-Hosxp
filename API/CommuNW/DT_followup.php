@@ -23,7 +23,7 @@ $data2 = isset($_POST['data2'])?$_POST['data2']:(isset($_GET['data2'])?$_GET['da
 $sql="SELECT DISTINCT p.cid,p.hn hn_se
 ,(SELECT an FROM an_stat WHERE hn=hn_se ORDER BY an desc limit 1)an
 ,concat(p.fname,' ',p.lname)fullname,t3.name tambon,t2.name ampher,t1.name changwat
-,a.dchdate
+,(SELECT dchdate FROM an_stat WHERE hn=hn_se ORDER BY dchdate desc limit 1)dchdate
 FROM patient p
 inner join an_stat a on a.hn = p.hn
 left outer join thaiaddress t1 on t1.chwpart=p.chwpart and
